@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -10,10 +11,6 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	// if r.URL.Path != "/" {
-	// 	app.notFound(w)
-	// 	return
-	// }
 
 	s, err := app.snippets.Latest()
 	if err != nil {
@@ -26,40 +23,43 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// load snippet based on id parameter
+func (app *application) snippetCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		id, err := strconv.Atoi(chi.URLParam(r, "id"))
+
+		if err != nil {
+			app.errorLog.Println(err)
+			app.notFound(w)
+			return
+		}
+
+		s, err := app.snippets.Get(id)
+
+		if err == models.ErrNoRecord {
+			app.notFound(w)
+			return
+		} else if err != nil {
+			app.serverError(w, err)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), "snippet", s)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
-	// id, err := strconv.Atoi(r.URL.Query().Get("id"))
-	// if err != nil || id < 1 {
-	// 	app.notFound(w)
-	// 	return
-	// }
-
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
-
-	if err != nil {
-		app.errorLog.Println(err)
-		app.notFound(w)
-		return
-	}
-	s, err := app.snippets.Get(id)
-	if err == models.ErrNoRecord {
-		app.notFound(w)
-		return
-	} else if err != nil {
-		app.serverError(w, err)
-		return
-	}
+	// snippet is loaded by the middleware
+	snippet := r.Context().Value("snippet").(*models.Snippet)
 
 	app.render(w, r, "show.page.tmpl", &templateData{
-		Snippet: s,
+		Snippet: snippet,
 	})
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-	// if r.Method != "POST" {
-	// 	w.Header().Set("Allow", "POST")
-	// 	app.clientError(w, http.StatusMethodNotAllowed)
-	// 	return
-	// }
 
 	title := "0 snail"
 	content := "0 snail\nClimb Mount Fjui,\nBut slowly, slowly!\n\n- Kobayashi"
