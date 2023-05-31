@@ -60,10 +60,9 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-
-	title := "0 snail"
-	content := "0 snail\nClimb Mount Fjui,\nBut slowly, slowly!\n\n- Kobayashi"
-	expires := "7"
+	title := r.FormValue("title")
+	content := r.FormValue("content")
+	expires := r.FormValue("expires")
 
 	id, err := app.snippets.Insert(title, content, expires)
 	if err != nil {
@@ -74,5 +73,5 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create snippet form"))
+	app.render(w, r, "create.page.tmpl", nil)
 }
