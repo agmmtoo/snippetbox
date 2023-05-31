@@ -1,0 +1,27 @@
+{{template "base" .}}
+
+{{define "title"}}Create a New Snippet{{end}}
+
+{{define "body"}}
+<form action='/snippet/create' method='POST'>
+<div>
+    <label for='title'>Title</label>
+    <input type='text' id='title' name='title' placeholder='Snippet Title'>
+</div>
+<div>
+    <label for='content'>Content</label>
+    <textarea id='content' name='content' placeholder='Snippet Content'></textarea>
+</div>
+<div>
+    <input type='radio' name='expires' value='30' id='month'>
+    <label for='month'>1 month</label>
+    <input type='radio' name='expires' value='7' id='week'>
+    <label for='week'>1 week</label>
+    <input type='radio' name='expires' value='1' id='day'>
+    <label for='day'>1 day</label>
+</div>
+<div>
+    <input type='submit' value='Create'>
+</div>
+</form>
+{{end}}
