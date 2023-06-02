@@ -2,10 +2,10 @@ package main
 
 import (
 	"html/template"
-	"net/url"
 	"path/filepath"
 	"time"
 
+	"agmmtoo.me/snippetbox/pkg/forms"
 	"agmmtoo.me/snippetbox/pkg/models"
 )
 
@@ -13,8 +13,7 @@ type templateData struct {
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 	CurrentYear int
-	FormData    url.Values
-	FormErrors  map[string]string
+	Form        *forms.Form
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {

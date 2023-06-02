@@ -4,28 +4,29 @@
 
 {{define "body"}}
 <form action='/snippet/create' method='POST'>
+{{with .Form}}
 <div>
     <label for='title'>Title</label>
-    {{with .FormErrors.title}}
+    {{with .Errors.Get "title"}}
     <label class='error'>{{.}}</label>
     {{end}}
-    <input type='text' id='title' name='title' placeholder='Snippet Title' value='{{.FormData.Get "title"}}'>
+    <input type='text' id='title' name='title' placeholder='Snippet Title' value='{{.Get "title"}}'>
 </div>
 <div>
     <label for='content'>Content</label>
-    {{with .FormErrors.content}}
+    {{with .Errors.Get "content"}}
     <label class='error'>{{.}}</label>
     {{end}}
     <textarea id='content' name='content' placeholder='Snippet Content'>
-     {{.FormData.Get "content"}}
+     {{.Get "content"}}
      </textarea>
 </div>
 <div>
     <span>Delete in</span>
-    {{with .FormErrors.expires}}
+    {{with .Errors.Get "expires"}}
     <label class='error'>{{.}}</label>
     {{end}}
-    {{$exp := or (.FormData.Get "expires") "30"}}
+    {{$exp := or (.Get "expires") "30"}}
     <input type='radio' name='expires' value='30' id='month' {{if (eq $exp "30")}}checked{{end}}>
     <label for='month'>1 month</label>
     <input type='radio' name='expires' value='7' id='week' {{if (eq $exp "7")}}checked{{end}}>
@@ -36,5 +37,6 @@
 <div>
     <input type='submit' value='Create'>
 </div>
+{{end}}
 </form>
 {{end}}
