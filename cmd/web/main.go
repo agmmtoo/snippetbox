@@ -48,6 +48,7 @@ func main() {
 
 	session := sessions.New([]byte(*secreat))
 	session.Lifetime = 12 * time.Hour
+	session.Secure = true
 
 	// app instance with di
 	app := &application{
@@ -66,7 +67,7 @@ func main() {
 	}
 
 	infoLog.Printf("Starting server on %s\n", *addr)
-	err = srv.ListenAndServe()
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	errorLog.Fatal(err)
 }
 
