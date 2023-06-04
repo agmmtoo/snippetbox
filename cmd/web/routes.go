@@ -25,6 +25,14 @@ func (app *application) routes() http.Handler {
 		})
 	})
 
+	r.Route("/user", func(r chi.Router) {
+		r.Get("/signup", dynamicMiddleware.ThenFunc(app.signupUserForm).(http.HandlerFunc))
+		r.Post("/signup", dynamicMiddleware.ThenFunc(app.signupUser).(http.HandlerFunc))
+		r.Get("/login", dynamicMiddleware.ThenFunc(app.loginUserForm).(http.HandlerFunc))
+		r.Post("/login", dynamicMiddleware.ThenFunc(app.loginUser).(http.HandlerFunc))
+		r.Post("/logout", dynamicMiddleware.ThenFunc(app.logoutUser).(http.HandlerFunc))
+	})
+
 	filesDir := http.Dir("./ui/static")
 	fileServer(r, "/static", filesDir)
 
