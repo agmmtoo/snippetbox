@@ -55,11 +55,8 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	// snippet is loaded by the middleware
 	snippet := r.Context().Value("snippet").(*models.Snippet)
 
-	flash := app.session.PopString(r, "flash")
-
 	app.render(w, r, "show.page.tmpl", &templateData{
 		Snippet: snippet,
-		Flash:   flash,
 	})
 }
 
