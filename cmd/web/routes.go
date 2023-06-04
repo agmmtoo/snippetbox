@@ -11,15 +11,17 @@ import (
 func (app *application) routes() http.Handler {
 	r := chi.NewRouter()
 
-	r.Get("/", app.home)
+	dynamicMiddleware := alice.New(app.session.Enable)
+
+	r.Get("/", dynamicMiddleware.ThenFunc(app.home).(http.HandlerFunc))
 
 	r.Route("/snippet", func(r chi.Router) {
-		r.Get("/create", app.createSnippetForm)
-		r.Post("/create", app.createSnippet)
+		r.Get("/create", dynamicMiddleware.ThenFunc(app.createSnippetForm).(http.HandlerFunc))
+		r.Post("/create", dynamicMiddleware.ThenFunc(app.createSnippet).(http.HandlerFunc))
 
 		r.Route("/{id}", func(r chi.Router) {
 			r.Use(app.snippetCtx)
-			r.Get("/", app.showSnippet)
+			r.Get("/", dynamicMiddleware.ThenFunc(app.showSnippet).(http.HandlerFunc))
 		})
 	})
 
