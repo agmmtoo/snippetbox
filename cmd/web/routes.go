@@ -16,8 +16,8 @@ func (app *application) routes() http.Handler {
 	r.Get("/", dynamicMiddleware.ThenFunc(app.home).(http.HandlerFunc))
 
 	r.Route("/snippet", func(r chi.Router) {
-		r.Get("/create", dynamicMiddleware.ThenFunc(app.createSnippetForm).(http.HandlerFunc))
-		r.Post("/create", dynamicMiddleware.ThenFunc(app.createSnippet).(http.HandlerFunc))
+		r.Get("/create", dynamicMiddleware.Append(app.requireAuthenticatedUser).ThenFunc(app.createSnippetForm).(http.HandlerFunc))
+		r.Post("/create", dynamicMiddleware.Append(app.requireAuthenticatedUser).ThenFunc(app.createSnippet).(http.HandlerFunc))
 
 		r.Route("/{id}", func(r chi.Router) {
 			r.Use(app.snippetCtx)
@@ -30,7 +30,7 @@ func (app *application) routes() http.Handler {
 		r.Post("/signup", dynamicMiddleware.ThenFunc(app.signupUser).(http.HandlerFunc))
 		r.Get("/login", dynamicMiddleware.ThenFunc(app.loginUserForm).(http.HandlerFunc))
 		r.Post("/login", dynamicMiddleware.ThenFunc(app.loginUser).(http.HandlerFunc))
-		r.Post("/logout", dynamicMiddleware.ThenFunc(app.logoutUser).(http.HandlerFunc))
+		r.Post("/logout", dynamicMiddleware.Append(app.requireAuthenticatedUser).ThenFunc(app.logoutUser).(http.HandlerFunc))
 	})
 
 	filesDir := http.Dir("./ui/static")
