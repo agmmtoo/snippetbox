@@ -17,14 +17,19 @@
     <nav>
         <div>
             <a href='/'>Home</a>
+            {{if .AuthenticatedUser}}
             <a href='/snippet/create'>Create Snippet</a>
+            {{end}}
         </div>
         <div>
+            {{if not .AuthenticatedUser}}
             <a href='/user/signup'>Signup</a>
             <a href='/user/login'>Login</a>
+            {{else}}
             <form action='/user/logout' method='POST'>
                 <button>Logout</button>
             </form>
+            {{end}}
         </div>
     </nav>
     <main>
