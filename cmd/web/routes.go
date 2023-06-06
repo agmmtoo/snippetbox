@@ -11,7 +11,7 @@ import (
 func (app *application) routes() http.Handler {
 	r := chi.NewRouter()
 
-	dynamicMiddleware := alice.New(app.session.Enable, noSurf)
+	dynamicMiddleware := alice.New(app.session.Enable, noSurf, app.authenticate)
 
 	r.Get("/", dynamicMiddleware.ThenFunc(app.home).(http.HandlerFunc))
 
