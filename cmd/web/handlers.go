@@ -46,14 +46,14 @@ func (app *application) snippetCtx(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "snippet", s)
+		ctx := context.WithValue(r.Context(), contextKeySnippet, s)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	// snippet is loaded by the middleware
-	snippet := r.Context().Value("snippet").(*models.Snippet)
+	snippet := r.Context().Value(contextKeySnippet).(*models.Snippet)
 
 	app.render(w, r, "show.page.tmpl", &templateData{
 		Snippet: snippet,
