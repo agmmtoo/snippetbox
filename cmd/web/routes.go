@@ -33,6 +33,8 @@ func (app *application) routes() http.Handler {
 		r.Post("/logout", dynamicMiddleware.Append(app.requireAuthenticatedUser).ThenFunc(app.logoutUser).(http.HandlerFunc))
 	})
 
+	r.Get("/ping", http.HandlerFunc(ping))
+
 	filesDir := http.Dir("./ui/static")
 	fileServer(r, "/static", filesDir)
 
